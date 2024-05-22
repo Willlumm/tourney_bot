@@ -20,6 +20,9 @@ async def on_message(message):
     if message.content.startswith("!hello"):
         await message.channel.send(f"Hello {message.author.mention}!")
 
+    if message.content.startswith("!setup"):
+        print(message.mentions)
+        # await message.channel.send(f"Hello {message.author.mention}!")
 client.run(config.token)
 
 
