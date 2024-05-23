@@ -1,4 +1,5 @@
 - Initialize tourney
+    - Update bot status
 - Bot asks users for books
 - Users send books to bot
 - Bot generates bracket

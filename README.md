@@ -10,3 +10,6 @@
 7. Copy the generated url and paste into browser
 8. Add bot to server
 9. Run main.py to start bot
+
+## Resources
+- https://discordpy.readthedocs.io/en/stable/api.html
