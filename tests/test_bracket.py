@@ -1,4 +1,4 @@
-from tourney_bot.match import Match
+from tourney_bot.bracket import Match
 
 def test_is_finished():
     match = Match("team1", "team2")
