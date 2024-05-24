@@ -39,3 +39,6 @@ def test_get_winner_draw():
 
 # Bracket tests
 
+def test_generate():
+    teams = ["1", "2", "3", "4"]
+    expected = []

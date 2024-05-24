@@ -1,7 +1,8 @@
 class Match:
     
-    def __init__(self, *teams: str) -> None:
+    def __init__(self, *teams: str, next_match=None) -> None:
         self.score = {team: None for team in teams}
+        self.next_match = next_match
 
     def is_finished(self) -> bool:
         if not self.score:
@@ -23,6 +24,9 @@ class Bracket:
         pass
     
     def __str__(self) -> str:
+        pass
+
+    def generate(self) -> list[Match]:
         pass
 
     def get_next_match(self) -> Match:
