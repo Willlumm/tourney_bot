@@ -4,6 +4,8 @@ class Match:
         self.score = {team: None for team in teams}
 
     def is_finished(self) -> bool:
+        if not self.score:
+            return False
         return all(score is not None for score in self.score.values())
 
     def get_winner(self) -> str:
