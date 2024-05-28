@@ -1,44 +1,74 @@
-from tourney_bot.bracket import Match
+import pytest
+
+from tourney_bot.bracket import Match, Bracket
 
 # Match tests
 
-def test_is_finished():
-    match = Match("team1", "team2")
-    match.score["team1"] = 0
-    match.score["team2"] = 0
-    assert match.is_finished()
+ids = [
+    "0/0 teams",
+    "0/1 teams",
+    "1/1 teams",
+    "0/2 teams",
+    "1/2 teams",
+    "_:_",
+    "0:_",
+    "0:0",
+    "1:0"
+]
 
-def test_is_finished_no_teams():
-    match = Match()
-    assert not match.is_finished()
+match_data = [
+    ([], []),
+    ([None], []),
+    (["a"], []),
+    ([None, None], []),
+    (["a", None], []),
+    (["a", "b"], []),
+    (["a", "b"], [0, None]),
+    (["a", "b"], [0, 0]),
+    (["a", "b"], [1, 0])
+]
 
-def test_is_finished_no_score():
-    match = Match("team1", "team2")
-    assert not match.is_finished()
+@pytest.fixture()
+def 
 
-def test_is_finished_one_score():
-    match = Match("team1", "team2")
-    match.score["team1"] = 0
-    assert not match.is_finished() 
+@pytest.fixture(params=match_data, ids=ids)
+def match_test_cases(request):
+    teams, scores = request.param
+    match = Match(*teams)
+    for team, score in zip(teams, scores):
+        match.scores[team] = score
+    return match
 
-def test_get_winner():
-    match = Match("team1", "team2")
-    match.score["team1"] = 0
-    match.score["team2"] = 1
-    assert match.get_winner() == "team2"
+@pytest.mark.parametrize(("id", "match", "expected"), setup_match_test_cases([True, False, True, False, False, False, False, True, True]))
 
-def test_get_winner_not_finished():
+@pytest.fixture(params=)
+def test_match_is_finished(match_test_cases, expected):
+    assert match.is_finished() == expected
+
+@pytest.mark.parametrize("expected", [None, None, "a", None, None, None, None, None, "a"])
+def test_match_get_winner(expected):
+    match = Match(*teams)
+    for team, score in zip(teams, scores):
+        match.scores[team] = score
+    assert match.get_winner() == expected
+
+def test_match_get_winner_not_finished():
     match = Match()
     assert match.get_winner() is None
 
-def test_get_winner_draw():
-    match = Match("team1", "team2")
-    match.score["team1"] = 0
-    match.score["team2"] = 0
+def test_match_get_winner_draw():
+    match = Match("a", "b")
+    match.scores["a"] = 0
+    match.scores["b"] = 0
     assert match.get_winner() is None
 
 # Bracket tests
 
-def test_generate():
+def test_bracket_get_num_teams():
     teams = ["1", "2", "3", "4"]
-    expected = []
+    final_match = Match()
+    assert Bracket(teams).matches == [
+        Match("1", "4", next_match=final_match),
+        Match("2", "3", next_match=final_match),
+        final_match
+    ]
