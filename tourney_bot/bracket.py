@@ -108,3 +108,20 @@ class Bracket:
 bracket = Bracket(["really long team name", "b", "c", "d", "e", "f", "g", "h"])
 print(bracket)
 print(bracket.matches)
+
+"""
+England  1 _   
+Finland  0  |
+            |_ England  - _
+            |  Netherl… -  |
+Switzer… 1 _|              |
+Netherl… 2                 |
+                           |_ ?        -
+                           |  ?        -
+Italy    1 _               |
+Slovenia 0  |              |
+            |_ Italy    - _|
+            |  ?        -
+Austria  - _|
+Belgium  -
+"""
