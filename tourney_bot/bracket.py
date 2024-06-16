@@ -8,7 +8,7 @@ class Match:
         self.scores = [None] * len(teams)
         self.next_match = next_match
 
-    def to_str(self, width: int = None) -> str:
+    def __str__(self, width: int = None) -> str:
         width = width if width else 10
         score_width = 3
         team_width = width - score_width
@@ -43,13 +43,20 @@ class Match:
 class Bracket:
 
     def __init__(self, teams: list[str]) -> None:
-        self.matches = Bracket.init_matches(teams)
+        self.rounds = Bracket.init_bracket(teams)
 
     def __str__(self) -> str:
-        matches = []
-        for i, match in enumerate(self.matches):
-            matches.append(f"{match.to_str()}")
-        return "\n\n".join(matches)
+        line_i0 = 0
+        line_di = 4
+        lines = [""] * ((4 * (len(self.rounds) ** 2)) - 3)
+        for round_i, round in enumerate(self.rounds):
+            for match_i, match in enumerate(round):
+                line_i = line_i0 + line_di * match_i
+                lines[line_i] += str(match.teams[0])
+                lines[line_i + 1] += str(match.teams[1])
+            line_i0 += line_di // 2
+            line_di *= 2
+        return "\n".join(lines)
 
     @staticmethod
     def get_num_rounds(num_teams: int) -> int:
@@ -79,7 +86,7 @@ class Bracket:
         return arranged_teams
     
     @staticmethod
-    def init_matches(teams: list[str]) -> list[Match]:
+    def init_bracket(teams: list[str]) -> list[list[Match]]:
         rounds = []
         num_rounds = Bracket.get_num_rounds(len(teams))
         for round_i in range(num_rounds):
@@ -93,11 +100,8 @@ class Bracket:
                     match.next_match = rounds[round_i - 1][match_i // 2]
                 round.append(match)
             rounds.append(round)
-        matches = []
-        for round in reversed(rounds):
-            matches.extend(round)
-        return matches
-
+        rounds.reverse()
+        return rounds
 
     def get_next_match(self) -> Match:
         pass
@@ -107,21 +111,49 @@ class Bracket:
 
 bracket = Bracket(["really long team name", "b", "c", "d", "e", "f", "g", "h"])
 print(bracket)
-print(bracket.matches)
 
 """
-England  1 _   
-Finland  0  |
-            |_ England  - _
-            |  Netherl… -  |
-Switzer… 1 _|              |
-Netherl… 2                 |
-                           |_ ?        -
-                           |  ?        -
-Italy    1 _               |
-Slovenia 0  |              |
-            |_ Italy    - _|
-            |  ?        -
-Austria  - _|
-Belgium  -
+    0  1  2  3
+
+0   0  2  6 14
+1   4 10 22
+2   8 18
+3  12 26
+
+   4  8 16
+"""
+
+
+
+"""
+ 0 England  1 _   
+ 1 Finland  0  |
+ 2             |_ England  - _
+ 3             |  Netherl… -  |
+ 4 Switzer… 1 _|              |
+ 5 Netherl… 2                 |
+ 6                            |_ ?        - _
+ 7                            |  ?        -  
+ 8 Italy    1 _               |
+ 9 Slovenia 0  |              |
+10             |_ Italy    - _|
+11             |  ?        -
+12 Austria  - _|
+13 Belgium  -
+14
+15
+16 England  1 _   
+17 Finland  0  |
+18             |_ England  - _
+19             |  Netherl… -  |
+20 Switzer… 1 _|              |
+21 Netherl… 2                 |
+22                            |_ ?        -
+23                            |  ?        -
+24 Italy    1 _               |
+25 Slovenia 0  |              |
+26             |_ Italy    - _|
+27             |  ?        -
+28 Austria  - _|
+29 Belgium  -
 """
