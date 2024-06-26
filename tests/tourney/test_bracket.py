@@ -1,45 +1,7 @@
 import pytest
 
-from tourney_bot.bracket import Match, Bracket
-
-def test_match_set_score():
-    match = Match(("a", "b"))
-    match.set_score("a", 0)
-    assert match.scores == [0, None]
-
-@pytest.mark.parametrize(
-    argnames = ["teams", "scores", "expected"],
-    argvalues = [
-        pytest.param([None], [], False, id="0/1 teams"),
-        pytest.param(["a"], [], True, id="1/1 teams"),
-        pytest.param([None, None], [], False, id="0/2 teams"),
-        pytest.param(["a", None], [], False, id="1/2 teams"),
-        pytest.param(["a", "b"], [], False, id="2/2 teams, -:- score"),
-        pytest.param(["a", "b"], [0], False, id="2/2 teams, 0:- score"),
-        pytest.param(["a", "b"], [0, 0], True, id="2/2 teams, 0:0 score"),
-        pytest.param(["a", "b"], [1, 0], True, id="2/2 teams, 1:0 score")
-    ]
-)
-def test_match_is_finished(teams, scores, expected):
-    match = Match(teams)
-    for team, score in zip(teams, scores):
-        match.set_score(team, score)
-    assert match.is_finished() == expected
-
-@pytest.mark.parametrize(
-    argnames = ["teams", "scores", "expected"],
-    argvalues = [
-        pytest.param(["a"], [], "a", id="Bye"),
-        pytest.param(["a", "b"], [], None, id="Not finished"),
-        pytest.param(["a", "b"], [0, 0], None, id="Draw"),
-        pytest.param(["a", "b"], [1, 0], "a", id="1:0"),
-    ]
-)
-def test_match_get_winner(teams, scores, expected):
-    match = Match(teams)
-    for team, score in zip(teams, scores):
-        match.set_score(team, score)
-    assert match.get_winner() == expected
+from tourney_bot.tourney.bracket import Bracket
+from tourney_bot.tourney.match import Match
 
 @pytest.mark.parametrize(
     argnames = ["num_teams", "expected"],
@@ -60,7 +22,7 @@ def test_match_get_winner(teams, scores, expected):
         (65, 7)
     ]
 )
-def test_bracket_get_num_rounds(num_teams, expected):
+def test_get_num_rounds(num_teams, expected):
     assert Bracket.get_num_rounds(num_teams) == expected
 
 @pytest.mark.parametrize(
@@ -75,7 +37,7 @@ def test_bracket_get_num_rounds(num_teams, expected):
         (16, [1, 16, 8, 9, 4, 13, 5, 12, 2, 15, 7, 10, 3, 14, 6, 11])
     ]
 )
-def test_bracket_arrange_seeds(num_teams, expected):
+def test_arrange_seeds(num_teams, expected):
     assert Bracket.arrange_seeds(num_teams) == expected
 
 @pytest.mark.parametrize(
@@ -89,7 +51,7 @@ def test_bracket_arrange_seeds(num_teams, expected):
         (["a", "b", "c", "d", "e", "f", "g", "h"], [("a", "h"), ("d", "e"), ("b", "g"), ("c", "f")])
     ]
 )
-def test_bracket_arrange_teams(teams, expected):
+def test_arrange_teams(teams, expected):
     assert Bracket.arrange_teams(teams) == expected
 
 @pytest.mark.parametrize(
@@ -106,7 +68,7 @@ def test_bracket_arrange_teams(teams, expected):
         (["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q"], 31)
     ]
 )
-def test_bracket_init_matches(teams, expected_num_matches):
+def test_init_matches(teams, expected_num_matches):
     bracket = Bracket(teams)
     assert len(bracket.matches) == expected_num_matches
     assert all(isinstance(match, Match) for match in bracket.matches)

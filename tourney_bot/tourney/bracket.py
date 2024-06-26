@@ -1,61 +1,31 @@
 from math import ceil, log2
-from typing import Self, Sequence
 
-class Match:
-    
-    def __init__(self, teams: Sequence[str], next_match: Self = None) -> None:
-        self.teams = list(teams)
-        self.scores = [None] * len(teams)
-        self.next_match = next_match
-
-    def __str__(self, width: int = None) -> str:
-        width = width if width else 10
-        score_width = 3
-        team_width = width - score_width
-        team_strs = []
-        for team, score in zip(self.teams, self.scores):
-            team = team[:team_width].ljust(team_width) if team else ""
-            score = score if score else "-"
-            team_strs.append(f"{team:<10} {score:>}")
-        return "\n".join(team_strs)
-
-    def set_score(self, team: str, score: int) -> None:
-        i = self.teams.index(team)
-        self.scores[i] = score
-
-    def is_finished(self) -> bool:
-        if None in self.teams:
-            return False
-        elif len(self.teams) == 1:
-            return True
-        elif None in self.scores:
-            return False
-        return True
-
-    def get_winner(self) -> str:
-        if not self.is_finished():
-            return
-        max_score = max(self.scores)
-        winners = [team for team, score in zip(self.teams, self.scores) if score == max_score]
-        if len(winners) == 1:
-            return winners[0]
+from match import Match
+from textbox import TextBox
 
 class Bracket:
 
-    def __init__(self, teams: list[str]) -> None:
+    def __init__(self, teams: list[str], match_str_width=10) -> None:
         self.rounds = Bracket.init_bracket(teams)
+        self.match_str_width = match_str_width
 
     def __str__(self) -> str:
+        textbox = TextBox()
         line_i0 = 0
         line_di = 4
         lines = [""] * ((4 * (len(self.rounds) ** 2)) - 3)
+        block = [""] * ((4 * (len(self.rounds) ** 2)) - 3)
         for round_i, round in enumerate(self.rounds):
             for match_i, match in enumerate(round):
                 line_i = line_i0 + line_di * match_i
-                lines[line_i] += str(match.teams[0])
-                lines[line_i + 1] += str(match.teams[1])
+                block[line_i] += str(match.teams[0])
+                block[line_i + 1] += str(match.teams[1])
             line_i0 += line_di // 2
             line_di *= 2
+            for i, line in enumerate(block):
+                if len(line) > self.match_str_width:
+                    line = f"{line[:self.match_str_width - 1]}…"
+                lines[i] = line.ljust(self.match_str_width)
         return "\n".join(lines)
 
     @staticmethod
