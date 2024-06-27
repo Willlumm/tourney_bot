@@ -1,5 +1,7 @@
 from typing import Self, Sequence
 
+from textbox import TextBox
+
 class Match:
     
     def __init__(self, teams: Sequence[str], next_match: Self = None) -> None:
@@ -7,17 +9,11 @@ class Match:
         self.scores = [None] * len(teams)
         self.next_match = next_match
 
-    def __str__(self, width: int = None) -> str:
-        width = width if width else 10
-        score_width = 3
-        team_width = width - score_width
-        team_strs = []
-        for team, score in zip(self.teams, self.scores):
-            team = team[:team_width].ljust(team_width) if team else ""
-            score = score if score else "-"
-            team_strs.append(f"{team:<10} {score:>}")
-        return "\n".join(team_strs)
-
+    def __str__(self, team_width: int = 8, score_width: int = 3) -> str:
+        teams = TextBox.from_list(self.teams, width=team_width)
+        scores = TextBox.from_list([score if score else "-" for score in self.scores], align="right", width=score_width)
+        return str(teams.join(scores, gap=1))
+#…
     def set_score(self, team: str, score: int) -> None:
         i = self.teams.index(team)
         self.scores[i] = score

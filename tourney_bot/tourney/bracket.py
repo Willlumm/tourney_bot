@@ -1,6 +1,6 @@
 from math import ceil, log2
 
-from match import Match
+from tourney.match import Match
 from textbox import TextBox
 
 class Bracket:
@@ -78,9 +78,6 @@ class Bracket:
 
     def submit_score(self, match: Match) -> None:
         pass
-
-bracket = Bracket(["really long team name", "b", "c", "d", "e", "f", "g", "h"])
-print(bracket)
 
 """
     0  1  2  3
